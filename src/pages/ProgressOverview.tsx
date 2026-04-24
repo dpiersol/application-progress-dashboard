@@ -58,7 +58,10 @@ export function ProgressOverview() {
 
   return (
     <>
-      <h1 className="page-title">{data.appName}</h1>
+      <p className="small registry-back">
+        <Link to="/">All GitHub projects</Link>
+      </p>
+      <h1 className="page-title">{data.appName} (local)</h1>
       <p className="lead">{data.progress.summary}</p>
 
       {error ? <div className="message error">{error}</div> : null}
@@ -78,7 +81,7 @@ export function ProgressOverview() {
         </div>
       </div>
 
-      <Link className="primary-link" to="/files">
+      <Link className="primary-link" to="/local/files">
         Open file-level detail
       </Link>
 

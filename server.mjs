@@ -189,6 +189,191 @@ app.delete("/api/files/:encodedPath", async (req, res) => {
   }
 });
 
+const GITHUB_ACCEPT = "application/vnd.github+json";
+const GITHUB_API_VERSION = "2022-11-28";
+
+function githubHeaders(token) {
+  return {
+    Authorization: `Bearer ${token}`,
+    Accept: GITHUB_ACCEPT,
+    "X-GitHub-Api-Version": GITHUB_API_VERSION,
+    "User-Agent": "application-progress-dashboard",
+  };
+}
+
+function getGithubToken(req) {
+  const raw = req.headers["x-github-token"];
+  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  return null;
+}
+
+function parseLinkNext(linkHeader) {
+  if (!linkHeader) return null;
+  const parts = linkHeader.split(",");
+  for (const part of parts) {
+    const m = part.trim().match(/^<([^>]+)>;\s*rel="next"/);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+async function fetchAllUserRepos(token) {
+  const all = [];
+  let url =
+    "https://api.github.com/user/repos?per_page=100&sort=updated&type=all";
+  for (;;) {
+    const res = await fetch(url, { headers: githubHeaders(token) });
+    if (!res.ok) {
+      const t = await res.text();
+      throw new Error(`GitHub repos ${res.status}: ${t.slice(0, 800)}`);
+    }
+    const batch = await res.json();
+    all.push(...batch);
+    const next = parseLinkNext(res.headers.get("link"));
+    if (!next) break;
+    url = next;
+  }
+  return all;
+}
+
+function summarizeRepo(r) {
+  return {
+    fullName: r.full_name,
+    name: r.name,
+    owner: r.owner.login,
+    htmlUrl: r.html_url,
+    description: r.description || "",
+    updatedAt: r.updated_at,
+    pushedAt: r.pushed_at,
+    defaultBranch: r.default_branch,
+    private: r.private,
+    fork: r.fork,
+  };
+}
+
+function normalizeRegistry(obj) {
+  if (!obj || typeof obj !== "object") return null;
+  if (typeof obj.appName !== "string") return null;
+  if (!obj.progress || typeof obj.progress !== "object") return null;
+  if (!Array.isArray(obj.files)) return null;
+  const p = obj.progress;
+  if (typeof p.phase !== "string") p.phase = "—";
+  if (
+    typeof p.percentComplete !== "number" ||
+    Number.isNaN(p.percentComplete)
+  ) {
+    p.percentComplete = 0;
+  }
+  if (typeof p.summary !== "string") p.summary = "";
+  if (!Array.isArray(p.milestones)) p.milestones = [];
+  return obj;
+}
+
+/**
+ * @param {string} owner
+ * @param {string} repo
+ * @param {string} defaultBranch
+ * @param {string} token
+ */
+async function fetchRegistryFromGithub(owner, repo, defaultBranch, token) {
+  const ref = defaultBranch || "main";
+  const res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/contents/data/registry.json?ref=${encodeURIComponent(ref)}`,
+    { headers: githubHeaders(token) }
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`GitHub file ${res.status}: ${t.slice(0, 500)}`);
+  }
+  const body = await res.json();
+  if (!body || body.encoding !== "base64" || typeof body.content !== "string") {
+    return null;
+  }
+  const raw = Buffer.from(body.content.replace(/\n/g, ""), "base64").toString(
+    "utf8"
+  );
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+  return normalizeRegistry(parsed);
+}
+
+app.post("/api/github/import", async (req, res) => {
+  try {
+    const token = getGithubToken(req);
+    if (!token) {
+      res.status(401).json({ error: "Send GitHub PAT in X-GitHub-Token header." });
+      return;
+    }
+    const reposRaw = await fetchAllUserRepos(token);
+    const repos = reposRaw.map(summarizeRepo);
+    /** @type {Record<string, unknown>} */
+    const registries = {};
+    const batchSize = 8;
+    for (let i = 0; i < reposRaw.length; i += batchSize) {
+      const batch = reposRaw.slice(i, i + batchSize);
+      await Promise.all(
+        batch.map(async (r) => {
+          const key = r.full_name;
+          try {
+            registries[key] = await fetchRegistryFromGithub(
+              r.owner.login,
+              r.name,
+              r.default_branch,
+              token
+            );
+          } catch {
+            registries[key] = null;
+          }
+        })
+      );
+    }
+    res.json({ repos, registries });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.get("/api/github/registry/:owner/:repo", async (req, res) => {
+  try {
+    const token = getGithubToken(req);
+    if (!token) {
+      res.status(401).json({ error: "Send GitHub PAT in X-GitHub-Token header." });
+      return;
+    }
+    const owner = req.params.owner;
+    const repo = req.params.repo;
+    const metaRes = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}`,
+      { headers: githubHeaders(token) }
+    );
+    if (!metaRes.ok) {
+      res
+        .status(metaRes.status)
+        .json({ error: (await metaRes.text()).slice(0, 800) });
+      return;
+    }
+    const meta = await metaRes.json();
+    const registry = await fetchRegistryFromGithub(
+      owner,
+      repo,
+      meta.default_branch,
+      token
+    );
+    res.json({
+      registry,
+      defaultBranch: meta.default_branch,
+      htmlUrl: meta.html_url,
+    });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
 app.post("/api/sync-git", async (req, res) => {
   try {
     const { repoPath, purposeDefault } = req.body || {};

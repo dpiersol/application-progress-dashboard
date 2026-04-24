@@ -267,6 +267,225 @@ tbody tr:last-child td {
   border-bottom: none;
 }
 
+.registry-table .registry-entry .registry-meta-row td {
+  border-bottom: none;
+}
+
+.registry-table .registry-entry .registry-purpose-row td {
+  border-bottom: 1px solid var(--border);
+  padding-top: 4px;
+}
+
+.registry-table .registry-entry:last-child .registry-purpose-row td {
+  border-bottom: none;
+}
+
+.registry-actions {
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.registry-purpose-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+.registry-purpose-row textarea {
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  resize: vertical;
+}
+
+.registry-purpose-readonly {
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  min-height: 56px;
+  font-size: 0.85rem;
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-btn:hover {
+  color: var(--fg);
+}
+
+.sort-btn.sort-active {
+  color: var(--accent);
+}
+
+.sort-indicator {
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+.registry-search {
+  margin-bottom: 12px;
+}
+
+.registry-search .field {
+  max-width: 420px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.registry-back {
+  margin-bottom: 8px;
+}
+
+.registry-field-wide {
+  flex: 1;
+  min-width: 220px;
+}
+
+.registry-field-repo {
+  flex: 1;
+  min-width: 260px;
+}
+
+.registry-field-flex {
+  flex: 1;
+  min-width: 200px;
+}
+
+.card-lead-tight {
+  margin-top: 0;
+}
+
+.registry-section-title {
+  font-size: 1.1rem;
+  margin-top: 28px;
+}
+
+.registry-actions-head {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.registry-search-meta {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.card-spaced {
+  margin-top: 22px;
+}
+
+.project-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .project-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .project-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.project-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-card-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.project-card-repo {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.project-card-desc {
+  margin: 0;
+}
+
+.project-card-missing {
+  margin: 0;
+}
+
+.project-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.project-card-stats .small {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.project-card-value {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.project-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.project-card-link {
+  margin-top: 0;
+}
+
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.85rem;

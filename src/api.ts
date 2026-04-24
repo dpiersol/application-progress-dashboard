@@ -1,6 +1,12 @@
-import type { FileEntry, Registry } from "./types";
+import type { FileEntry, GitHubRepoSummary, Registry } from "./types";
 
 const base = "/api";
+
+export const GITHUB_PAT_STORAGE_KEY = "github.pat";
+
+function githubTokenHeaders(token: string): HeadersInit {
+  return { "X-GitHub-Token": token };
+}
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
@@ -68,5 +74,34 @@ export async function syncFromGit(repoPath: string, purposeDefault?: string) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ repoPath, purposeDefault }),
     })
+  );
+}
+
+export async function importAllFromGithub(token: string): Promise<{
+  repos: GitHubRepoSummary[];
+  registries: Record<string, Registry | null>;
+}> {
+  return json(
+    await fetch(`${base}/github/import`, {
+      method: "POST",
+      headers: githubTokenHeaders(token),
+    })
+  );
+}
+
+export async function fetchGithubRegistry(
+  owner: string,
+  repo: string,
+  token: string
+): Promise<{
+  registry: Registry | null;
+  defaultBranch: string;
+  htmlUrl: string;
+}> {
+  return json(
+    await fetch(
+      `${base}/github/registry/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+      { headers: githubTokenHeaders(token) }
+    )
   );
 }

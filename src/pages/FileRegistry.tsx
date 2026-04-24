@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   addFile,
@@ -7,7 +7,7 @@ import {
   patchFile,
   syncFromGit,
 } from "../api";
-import { formatDate, formatTime } from "../format";
+import { RegistryFileTable } from "../components/RegistryFileTable";
 import type { FileEntry, Registry } from "../types";
 
 const NAME_KEY = "tracker.displayName";
@@ -41,11 +41,6 @@ export function FileRegistry() {
   const [purposeDrafts, setPurposeDrafts] = useState<Record<string, string>>(
     {}
   );
-
-  const sortedFiles = useMemo(() => {
-    if (!data) return [];
-    return [...data.files].sort((a, b) => a.path.localeCompare(b.path));
-  }, [data]);
 
   useEffect(() => {
     store(NAME_KEY, displayName);
@@ -174,14 +169,14 @@ export function FileRegistry() {
 
   return (
     <>
-      <p className="small" style={{ marginBottom: 8 }}>
-        <Link to="/">Back to overview</Link>
+      <p className="small registry-back">
+        <Link to="/local">Back to local overview</Link>
       </p>
-      <h1 className="page-title">File registry</h1>
+      <h1 className="page-title">File registry (local)</h1>
       <p className="lead">
-        Each row is one tracked file: immutable creation metadata (unless you
-        remove the row), and modification fields that update whenever you save an
-        edit or run Git sync.
+        This page edits the registry file on this machine. For GitHub-hosted
+        projects, use <Link to="/">All projects</Link> and open a repository
+        there.
       </p>
 
       {error ? <div className="message error">{error}</div> : null}
@@ -190,7 +185,7 @@ export function FileRegistry() {
       <div className="card">
         <h2>Your identity on this machine</h2>
         <div className="toolbar">
-          <div className="field" style={{ flex: 1, minWidth: 220 }}>
+          <div className="field registry-field-wide">
             <label htmlFor="who">Creator / modifier name</label>
             <input
               id="who"
@@ -208,14 +203,14 @@ export function FileRegistry() {
 
       <div className="card">
         <h2>Import paths from Git (optional)</h2>
-        <p className="small" style={{ marginTop: 0 }}>
+        <p className="small card-lead-tight">
           Runs <code className="mono">git log</code> /{" "}
           <code className="mono">git ls-files</code> in the repo you specify.
           New files get a default purpose you can edit later. Existing rows keep
           their purpose; last-modified is refreshed from Git.
         </p>
         <div className="toolbar">
-          <div className="field" style={{ flex: 1, minWidth: 260 }}>
+          <div className="field registry-field-repo">
             <label htmlFor="repo">Git repository path (absolute)</label>
             <input
               id="repo"
@@ -239,7 +234,7 @@ export function FileRegistry() {
       <div className="card">
         <h2>Register a file manually</h2>
         <div className="toolbar">
-          <div className="field" style={{ flex: 1, minWidth: 200 }}>
+          <div className="field registry-field-flex">
             <label htmlFor="path">Relative file path</label>
             <input
               id="path"
@@ -249,7 +244,7 @@ export function FileRegistry() {
               placeholder="src/app/main.ts"
             />
           </div>
-          <div className="field" style={{ flex: 1, minWidth: 200 }}>
+          <div className="field registry-field-flex">
             <label htmlFor="purpose">Purpose (short)</label>
             <input
               id="purpose"
@@ -269,86 +264,18 @@ export function FileRegistry() {
         </div>
       </div>
 
-      <h2 className="page-title" style={{ fontSize: "1.1rem", marginTop: 28 }}>
-        All tracked files
-      </h2>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Purpose</th>
-              <th>Created</th>
-              <th>Creator</th>
-              <th>Modified</th>
-              <th>Modifier</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedFiles.length === 0 ? (
-              <tr>
-                <td colSpan={7}>
-                  <span className="small">No files yet. Add one or sync from Git.</span>
-                </td>
-              </tr>
-            ) : (
-              sortedFiles.map((row) => (
-                <tr key={row.path}>
-                  <td className="mono">{row.path}</td>
-                  <td>
-                    <textarea
-                      className="mono"
-                      style={{
-                        width: "100%",
-                        minWidth: 180,
-                        minHeight: 52,
-                        margin: 0,
-                      }}
-                      value={purposeDrafts[row.path] ?? row.purpose}
-                      onChange={(e) =>
-                        setPurposeDrafts((d) => ({
-                          ...d,
-                          [row.path]: e.target.value,
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <div>{formatDate(row.createdAt)}</div>
-                    <div className="small">{formatTime(row.createdAt)}</div>
-                  </td>
-                  <td>{row.createdBy}</td>
-                  <td>
-                    <div>{formatDate(row.modifiedAt)}</div>
-                    <div className="small">{formatTime(row.modifiedAt)}</div>
-                  </td>
-                  <td>{row.modifiedBy}</td>
-                  <td>
-                    <div className="row-actions">
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => handleSavePurpose(row)}
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        className="danger"
-                        disabled={busy}
-                        onClick={() => handleDelete(row)}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <RegistryFileTable
+        files={data.files}
+        readOnly={false}
+        busy={busy}
+        purposeDrafts={purposeDrafts}
+        onPurposeDraftChange={(path, value) =>
+          setPurposeDrafts((d) => ({ ...d, [path]: value }))
+        }
+        onSaveRow={handleSavePurpose}
+        onDeleteRow={handleDelete}
+        emptyHint="No files yet. Add one or sync from Git."
+      />
     </>
   );
 }

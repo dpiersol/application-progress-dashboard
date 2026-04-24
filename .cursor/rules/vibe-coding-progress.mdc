@@ -8,13 +8,13 @@ alwaysApply: true
 ## At the start of a session
 
 1. From this repository root, run `npm run dev`. The dev server opens the dashboard in the browser (`http://localhost:5173`); keep that tab pinned for the session.
-2. Glance at **Overview** for phase and milestones, then use **File registry** as the working map of the codebase.
+2. On **All projects** (`/`), import from GitHub to see every repo that has `data/registry.json`, or open **Local overview** (`/local`) for this machine’s registry only. Use **File registry** (local: `/local/files`, or a repo’s read-only files after drilling in from All projects) as the map of the codebase.
 
 ## While coding
 
-- **New file:** Add a row (or run **Sync from Git** after commit) and set **Purpose** to one short line (what the file is responsible for; aim under ~100 characters).
+- **New file:** On **Local files**, add a row (or run **Sync from Git** after commit) and set **Purpose** to one short line (what the file is responsible for; aim under ~100 characters). Commit `data/registry.json` in each app repo so **All projects** can show progress after import.
 - **Meaningful edit to an existing file:** Update that file’s **Purpose** if its role changed; click **Save** so **modified** time and modifier refresh. Alternatively run **Sync from Git** to refresh last-modified from Git without rewriting purpose text.
-- **High-level progress:** When phase or completion meaningfully shifts, edit and **Save overview** on the Overview page.
+- **High-level progress:** When phase or completion meaningfully shifts, edit and **Save overview** on **Local overview** (or edit the JSON in the remote repo).
 
 ## Using this dashboard with other vibe-coded repos
 
