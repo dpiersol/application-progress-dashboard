@@ -48,10 +48,31 @@ export function GitHubProjects() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastImportedAt, setLastImportedAt] = useState<string | null>(null);
+  const [apiHealth, setApiHealth] = useState<"checking" | "ok" | "bad">(
+    "checking"
+  );
 
   useEffect(() => {
     saveToken(token);
   }, [token]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/health");
+        const body = await res.json().catch(() => null);
+        if (cancelled) return;
+        if (res.ok && body && body.ok === true) setApiHealth("ok");
+        else setApiHealth("bad");
+      } catch {
+        if (!cancelled) setApiHealth("bad");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function runImport() {
     const t = tokenDraft.trim();
@@ -85,6 +106,21 @@ export function GitHubProjects() {
         when that file exists. Progress shown below comes from that file. Open a
         project for overview and file-level drill-down.
       </p>
+
+      {apiHealth === "checking" ? (
+        <p className="small">Checking local registry API…</p>
+      ) : null}
+      {apiHealth === "bad" ? (
+        <div className="message error">
+          The registry API is not reachable at <code className="mono">/api</code>
+          . Run <code className="mono">npm run dev</code> from this project (it
+          starts Vite and the registry API together). If you only run{" "}
+          <code className="mono">vite</code>, start the API with{" "}
+          <code className="mono">npm start</code> (default port{" "}
+          <code className="mono">38471</code>) so the Vite proxy can forward{" "}
+          <code className="mono">/api</code> correctly.
+        </div>
+      ) : null}
 
       <div className="card">
         <h2>GitHub access</h2>

@@ -8,7 +8,8 @@ import { promisify } from "util";
 const execFileAsync = promisify(execFile);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REGISTRY_PATH = join(__dirname, "data", "registry.json");
-const PORT = Number(process.env.PORT || 3847);
+/** Default avoids clashing with other local apps commonly bound to 3847. */
+const PORT = Number(process.env.PORT || 38471);
 
 /** @typedef {{ path: string; purpose: string; createdAt: string; createdBy: string; modifiedAt: string; modifiedBy: string }} FileEntry */
 
