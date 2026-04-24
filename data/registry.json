@@ -1,14 +1,167 @@
 {
-  "appName": "My application",
+  "appName": "Application progress dashboard",
   "progress": {
-    "phase": "Planning",
-    "percentComplete": 10,
-    "summary": "High-level status for stakeholders. Use the file registry for implementation detail.",
+    "phase": "Maintenance",
+    "percentComplete": 85,
+    "summary": "Companion for vibe-coded projects: open this first each session (npm run dev opens the browser). Use Overview for stakeholders; File registry records what each file is for. Copy .cursor/rules/vibe-coding-progress.mdc into other repos if you want the same habit.",
     "milestones": [
-      { "name": "Requirements captured", "done": true },
-      { "name": "Core features implemented", "done": false },
-      { "name": "Release candidate", "done": false }
+      { "name": "Overview and registry UI", "done": true },
+      { "name": "Git sync and local API", "done": true },
+      { "name": "Session workflow rule and seeded purposes", "done": true }
     ]
   },
-  "files": []
+  "files": [
+    {
+      "path": ".cursor/rules/vibe-coding-progress.mdc",
+      "purpose": "Cursor rule: session-start dashboard habit and keeping file purposes in sync while vibe coding.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": ".gitignore",
+      "purpose": "Keeps node_modules, dist, and machine-local artifacts out of Git.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "data/registry.json",
+      "purpose": "Single source of truth: app name, progress block, and all file rows with purposes.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "index.html",
+      "purpose": "Vite HTML shell: loads the bundled client and mounts the React root div.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "package-lock.json",
+      "purpose": "Locked dependency tree so installs and CI stay reproducible across machines.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "package.json",
+      "purpose": "Project metadata, npm scripts (dev/build), and React, Vite, Express dependency list.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "server.mjs",
+      "purpose": "Express API: load/save registry, add/update/delete file rows, Git-based sync for timestamps.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/App.tsx",
+      "purpose": "App shell: header, nav links between Overview and File registry, route table.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/api.ts",
+      "purpose": "Thin typed wrappers around fetch for registry CRUD and Git sync endpoints.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/format.ts",
+      "purpose": "Formats ISO timestamps into human-readable local date and time for the table.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/main.tsx",
+      "purpose": "Client entry: mounts React with StrictMode and BrowserRouter around App.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/pages/FileRegistry.tsx",
+      "purpose": "File registry page: table, purpose edits, manual add, Git sync, local display name storage.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/pages/ProgressOverview.tsx",
+      "purpose": "High-level progress page: stats, milestones, editable summary, link into file detail.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/styles.css",
+      "purpose": "Global styles: layout, navigation, cards, table, forms, light/dark-friendly tokens.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/types.ts",
+      "purpose": "Shared TypeScript shapes for registry JSON, milestones, and file entry rows.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "src/vite-env.d.ts",
+      "purpose": "Vite client type references for import.meta.env and static asset imports.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "tsconfig.json",
+      "purpose": "TypeScript project defaults for the React application under src/.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "purpose": "Separate TS config for Node-side tooling such as vite.config.ts.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    },
+    {
+      "path": "vite.config.ts",
+      "purpose": "Vite config: React plugin, dev server port, API proxy to the registry server, open browser.",
+      "createdAt": "2026-04-24T09:38:38-06:00",
+      "createdBy": "dpiersol",
+      "modifiedAt": "2026-04-24T09:38:38-06:00",
+      "modifiedBy": "dpiersol"
+    }
+  ]
 }

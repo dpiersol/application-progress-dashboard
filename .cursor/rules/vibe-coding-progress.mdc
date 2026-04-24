@@ -1,0 +1,24 @@
+---
+description: Start each vibe session with the progress dashboard; keep file purposes current.
+alwaysApply: true
+---
+
+# Vibe coding session — progress dashboard
+
+## At the start of a session
+
+1. From this repository root, run `npm run dev`. The dev server opens the dashboard in the browser (`http://localhost:5173`); keep that tab pinned for the session.
+2. Glance at **Overview** for phase and milestones, then use **File registry** as the working map of the codebase.
+
+## While coding
+
+- **New file:** Add a row (or run **Sync from Git** after commit) and set **Purpose** to one short line (what the file is responsible for; aim under ~100 characters).
+- **Meaningful edit to an existing file:** Update that file’s **Purpose** if its role changed; click **Save** so **modified** time and modifier refresh. Alternatively run **Sync from Git** to refresh last-modified from Git without rewriting purpose text.
+- **High-level progress:** When phase or completion meaningfully shifts, edit and **Save overview** on the Overview page.
+
+## Using this dashboard with other vibe-coded repos
+
+- Clone or keep this repo alongside the app you are building. Run `npm run dev` here and point **Sync from Git** at the **absolute path** of that app’s Git root when you want timestamps aligned with that project’s history.
+- Optional: copy this rule file into another project’s `.cursor/rules/` and set `alwaysApply: true` there so every session in that project nudges the same habit (you still run the dashboard from this repo, or run a second clone).
+
+Remote copy of this project: https://github.com/dpiersol/application-progress-dashboard
