@@ -10,8 +10,26 @@ function githubTokenHeaders(token: string): HeadersInit {
 
 async function json<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error((err as { error?: string }).error || res.statusText);
+    const text = await res.text();
+    let message = `${res.status} ${res.statusText}`;
+    try {
+      const err = JSON.parse(text) as {
+        error?: string;
+        message?: string;
+      };
+      if (typeof err.error === "string" && err.error.trim()) {
+        message = err.error.trim();
+      } else if (typeof err.message === "string" && err.message.trim()) {
+        message = err.message.trim();
+      } else if (text.trim() && text.length < 600) {
+        message = text.trim();
+      }
+    } catch {
+      if (text.trim()) message = text.trim().slice(0, 600);
+    }
+    throw new Error(
+      `${message} (${res.url || "request"})`
+    );
   }
   return res.json() as Promise<T>;
 }
