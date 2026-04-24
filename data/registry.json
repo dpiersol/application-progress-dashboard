@@ -1,0 +1,14 @@
+{
+  "appName": "My application",
+  "progress": {
+    "phase": "Planning",
+    "percentComplete": 10,
+    "summary": "High-level status for stakeholders. Use the file registry for implementation detail.",
+    "milestones": [
+      { "name": "Requirements captured", "done": true },
+      { "name": "Core features implemented", "done": false },
+      { "name": "Release candidate", "done": false }
+    ]
+  },
+  "files": []
+}

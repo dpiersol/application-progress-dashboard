@@ -1,0 +1,72 @@
+import type { FileEntry, Registry } from "./types";
+
+const base = "/api";
+
+async function json<T>(res: Response): Promise<T> {
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { error?: string }).error || res.statusText);
+  }
+  return res.json() as Promise<T>;
+}
+
+export async function fetchRegistry(): Promise<Registry> {
+  return json<Registry>(await fetch(`${base}/registry`));
+}
+
+export async function saveRegistry(body: Registry): Promise<void> {
+  await json(await fetch(`${base}/registry`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }));
+}
+
+export async function addFile(entry: {
+  path: string;
+  purpose: string;
+  creatorName: string;
+}): Promise<FileEntry> {
+  return json<FileEntry>(
+    await fetch(`${base}/files`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entry),
+    })
+  );
+}
+
+export async function patchFile(
+  path: string,
+  body: { purpose?: string; modifierName: string }
+): Promise<FileEntry> {
+  const encoded = encodeURIComponent(path);
+  return json<FileEntry>(
+    await fetch(`${base}/files/${encoded}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+  );
+}
+
+export async function deleteFile(path: string): Promise<void> {
+  const encoded = encodeURIComponent(path);
+  await json(await fetch(`${base}/files/${encoded}`, { method: "DELETE" }));
+}
+
+export async function syncFromGit(repoPath: string, purposeDefault?: string) {
+  return json<{
+    ok: boolean;
+    trackedInGit: number;
+    registryRows: number;
+    added: number;
+    updatedTimestamps: number;
+  }>(
+    await fetch(`${base}/sync-git`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repoPath, purposeDefault }),
+    })
+  );
+}
