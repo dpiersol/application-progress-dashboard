@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0",
+  "project": {
+    "id": "application-progress-dashboard",
+    "name": "Application Progress Dashboard",
+    "type": "web-app",
+    "repoPathHint": "/Users/e25347/development/repos/application-progress-dashboard",
+    "owner": "David Piersol",
+    "stakeholders": [],
+    "sourceOfTruth": "local-repo"
+  },
+  "visibility": {
+    "dashboard": true,
+    "jira": false,
+    "confluence": false,
+    "hidden": true
+  },
+  "syncPolicy": {
+    "mode": "dashboard_only",
+    "askBeforeEnablingExternalSync": true,
+    "reason": "Shelved/reference work retained for future lookup; no Jira or Confluence sync."
+  },
+  "versioning": {
+    "scheme": "MSP",
+    "format": "vM.S.P[-label]",
+    "currentVersion": "v0.1.0-dev",
+    "targetVersion": "v1.0.0",
+    "milestones": [
+      {
+        "id": "m1",
+        "name": "Legacy reference",
+        "targetVersion": "v1.0.0",
+        "status": "in_progress",
+        "targetDate": "2026-05-08"
+      }
+    ]
+  },
+  "delivery": {
+    "status": "shelved",
+    "phase": "Legacy reference",
+    "checkpointDate": "2026-05-08",
+    "pilotTargetDate": "2026-05-08",
+    "confidence": "medium"
+  },
+  "integrations": {
+    "jira": {
+      "enabled": false,
+      "projectKey": "",
+      "projectName": "",
+      "syncMode": "disabled"
+    },
+    "confluence": {
+      "enabled": false,
+      "spaceKey": "",
+      "pageId": "",
+      "generatedSectionMode": "replace-between-markers"
+    },
+    "dashboard": {
+      "enabled": true,
+      "syncMode": "local-scan"
+    }
+  },
+  "environments": [
+    {
+      "key": "local",
+      "label": "Local",
+      "status": "healthy",
+      "url": null,
+      "owner": "developer"
+    },
+    {
+      "key": "dev",
+      "label": "Development",
+      "status": "not_configured",
+      "url": null,
+      "owner": "team"
+    },
+    {
+      "key": "uat",
+      "label": "UAT",
+      "status": "not_configured",
+      "url": null,
+      "owner": "stakeholder"
+    },
+    {
+      "key": "prod",
+      "label": "Production",
+      "status": "not_configured",
+      "url": null,
+      "owner": "team"
+    }
+  ],
+  "promptSprints": [
+    {
+      "id": "P1",
+      "name": "Retrofit BuildTrack progress contract",
+      "lane": "foundation",
+      "milestoneId": "m1",
+      "versionScope": "v0.1.0-dev",
+      "status": "done",
+      "jiraKey": null,
+      "summary": "Add the BuildTrack project plan and Cursor rule so progress can be tracked locally.",
+      "validation": {
+        "build": "not_run",
+        "tests": "not_run",
+        "approval": "pending"
+      },
+      "acceptance": [
+        ".progress/project-plan.json exists and matches the BuildTrack contract.",
+        ".cursor/rules/buildtrack-progress.mdc exists.",
+        "Project sync mode is explicitly set."
+      ],
+      "recommendedPrompt": "Review this repo against the BuildTrack project plan, update the current sprint, and summarize the next build/test/approval step."
+    }
+  ],
+  "blockers": []
+}

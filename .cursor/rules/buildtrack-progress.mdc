@@ -1,0 +1,52 @@
+---
+description: Keep BuildTrack .progress files current during AI-assisted development.
+alwaysApply: true
+---
+
+# BuildTrack progress rule
+
+Use `.progress/project-plan.json` as the committed project plan and local source of truth for BuildTrack.
+
+## At project initialization
+
+1. Create `.progress/project-plan.json` from the PRD, BRD, sprint plan, or user prompt.
+2. Ask whether the project should be:
+   - `dashboard_only`
+   - `dashboard_jira_confluence`
+3. Set `visibility.jira` and `visibility.confluence` from that answer.
+4. Use MSP versioning everywhere: `vM.S.P[-label]`.
+
+## During each prompt sprint
+
+1. Find the current prompt sprint in `promptSprints`.
+2. Set its status to `in_progress` before implementation.
+3. Keep `recommendedPrompt` current so the human can resume work later.
+4. Update validation fields after build, test, and human approval.
+5. When the sprint is complete, set status to `done`; after approval, set it to `approved`.
+
+## Local-only progress files
+
+Do not commit these files:
+
+```text
+.progress/progress.local.json
+.progress/prompt-history.local.ndjson
+.progress/events.local.ndjson
+.progress/sync-state.local.json
+.progress/snapshots/
+```
+
+Append prompt history as summarized records, not raw full prompts by default:
+
+```json
+{"timestamp":"2026-05-08T00:00:00.000Z","version":"v0.1.0-dev","promptSprintId":"P1","summary":"Implemented local scanner API and dashboard route.","outcome":"build pending","agent":"cursor","hash":"optional"}
+```
+
+## External sync
+
+Only sync externally when the project has opted into `dashboard_jira_confluence`.
+
+- Jira: one issue per prompt sprint.
+- Jira comments: add only when a prompt sprint becomes `done` or `approved`.
+- Confluence: replace only the generated section between markers.
+- Dashboard-only side projects never create Jira issues or Confluence pages.
